@@ -6,7 +6,4 @@ export class AuthController {
   constructor(
     private authService: AuthService,
   ) {}
-
-  @Post('/signup')
-  signUp(@Body)
 }
