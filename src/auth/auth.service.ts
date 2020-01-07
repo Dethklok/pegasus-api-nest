@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 
 @Injectable()
 export class AuthService {
@@ -6,7 +7,7 @@ export class AuthService {
     console.log(username, password);
   }
 
-  signIn(username, password) {
-    console.log(username, password);
+  async signIn(authCredentialsDto: AuthCredentialsDto) {
+    return 'done';
   }
 }
