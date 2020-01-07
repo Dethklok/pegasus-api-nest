@@ -17,7 +17,7 @@ API for Pegasus messenger.
 # development
 $ docker-compose up --build
 ```
-Application running in watch mode. Just enjoy.
+Application running in watch mode in port 3001. Just enjoy.
 
 ## Config
 
