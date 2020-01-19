@@ -1,32 +1,34 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { ConflictException, InternalServerErrorException } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
 import { User } from './user.entity';
-import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import * as bcrypt from 'bcryptjs';
+import { PostgresqlErrorCodes } from '../constants/postgresql-error-codes';
+import { ConflictException, InternalServerErrorException } from '@nestjs/common';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async signUp(registrationCredentialsDto: RegistrationCredentialsDto): Promise<void> {
-    const { username, password, email } = registrationCredentialsDto;
+  async createUser(createUserDto: CreateUserDto): Promise<void> {
+    const salt = await bcrypt.genSalt();
+    const password = await this.hashPassword(createUserDto.password, salt);
 
-    const user = new User();
-    user.username = username;
-    user.email = email;
-    user.salt = await bcrypt.genSalt();
-    user.password = await this.hashPassword(password, user.salt);
+    const user = this.create({
+      ...createUserDto,
+      password,
+      salt,
+    });
 
     try {
       await user.save();
     } catch (error) {
-      if (error.code === '23505') {
-        throw new ConflictException('Username already exists.');
+      if (error.code === PostgresqlErrorCodes.PG_UNIQUE_VIOLATION) {
+        throw new ConflictException('Username already exists');
       } else {
         throw new InternalServerErrorException();
       }
     }
   }
 
-  private async hashPassword(password, salt): Promise<string> {
+  private hashPassword(password, salt): Promise<string> {
     return bcrypt.hash(password, salt);
   }
 }
