@@ -1,16 +1,18 @@
-import { Body, Controller, Get, Param, Post, ValidationPipe } from '@nestjs/common';
-import { ApiTags, ApiResponse } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, ValidationPipe } from '@nestjs/common';
+import { ApiTags, ApiCreatedResponse, ApiBadRequestResponse, ApiConflictResponse, ApiOkResponse,
+  ApiNotFoundResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserDataLessenedInterface } from './interfaces/userDataLessened.interface';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @ApiResponse({ status: 201, description: 'The user successfully created.'})
-  @ApiResponse({ status: 400, description: 'Bad request. Invalid data in DTO.'})
-  @ApiResponse({ status: 409, description: 'Username already exists.'})
+  @ApiCreatedResponse({ description: 'User successfully created.'})
+  @ApiBadRequestResponse({ description: 'Bad request. Invalid data in DTO.' })
+  @ApiConflictResponse({ description: 'Username already exists' })
   @Post()
   createUser(
     @Body(ValidationPipe)
@@ -19,8 +21,11 @@ export class UsersController {
     return this.usersService.createUser(createUserDto);
   }
 
+  @ApiOkResponse({ description: 'Successfully find user data.'})
+  @ApiBadRequestResponse({ description: 'Bad request params.'})
+  @ApiNotFoundResponse({ description: 'User not found.'})
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return null;
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<UserDataLessenedInterface> {
+    return this.usersService.findOne(id);
   }
 }
