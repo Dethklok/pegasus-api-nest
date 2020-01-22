@@ -17,7 +17,6 @@ async function bootstrap() {
     .setTitle('Pegasus API')
     .setDescription('API documentation')
     .setVersion('1.0')
-    .addTag('Pegasus')
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
