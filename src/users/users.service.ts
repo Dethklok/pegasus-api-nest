@@ -3,12 +3,13 @@ import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserDataLessenedInterface } from './interfaces/userDataLessened.interface';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserRepository)
-    private userRepository: UserRepository,
+    private readonly userRepository: UserRepository,
   ) {
   }
 
@@ -16,7 +17,17 @@ export class UsersService {
     return this.userRepository.createUser(createUserDto);
   }
 
-  async findOne(id: number): Promise<UserDataLessenedInterface> {
+  async findOne(username: string): Promise<User> {
+    const user = await this.userRepository.findOne({ username });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
+  async getUserData(id: number): Promise<UserDataLessenedInterface> {
     const user = await this.userRepository.findOne(id);
 
     if (!user) {

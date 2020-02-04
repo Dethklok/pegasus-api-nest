@@ -8,7 +8,7 @@ import { UserDataLessenedInterface } from './interfaces/userDataLessened.interfa
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @ApiCreatedResponse({ description: 'User successfully created.'})
   @ApiBadRequestResponse({ description: 'Bad request. Invalid data in DTO.' })
@@ -26,6 +26,6 @@ export class UsersController {
   @ApiNotFoundResponse({ description: 'User not found.'})
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<UserDataLessenedInterface> {
-    return this.usersService.findOne(id);
+    return null;
   }
 }
