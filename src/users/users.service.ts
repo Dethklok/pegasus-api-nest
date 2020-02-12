@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserDataLessenedInterface } from './interfaces/userDataLessened.interface';
 import { User } from './user.entity';
+import { UserPublicData } from './interfaces/user-public-data.interface';
 
 @Injectable()
 export class UsersService {
@@ -27,15 +27,13 @@ export class UsersService {
     return user;
   }
 
-  async getUserData(id: number): Promise<UserDataLessenedInterface> {
+  async getUserData(id: number): Promise<UserPublicData> {
     const user = await this.userRepository.findOne(id);
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const { username } = user;
-
-    return { username };
+    return user.getPublicData();
   }
 }
