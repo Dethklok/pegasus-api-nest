@@ -3,7 +3,7 @@ import { ApiTags, ApiCreatedResponse, ApiBadRequestResponse, ApiConflictResponse
   ApiNotFoundResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserData } from './interfaces/user-data.interface';
+import { UserPublicData } from './interfaces/user-public-data.interface';
 
 @ApiTags('users')
 @Controller('users')
@@ -25,7 +25,7 @@ export class UsersController {
   @ApiBadRequestResponse({ description: 'Bad request params.'})
   @ApiNotFoundResponse({ description: 'User not found.'})
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<UserData> {
-    return null;
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<UserPublicData> {
+    return this.usersService.getUserPublicData(id);
   }
 }
