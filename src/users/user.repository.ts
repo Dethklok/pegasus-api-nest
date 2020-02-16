@@ -7,7 +7,7 @@ import { ConflictException, InternalServerErrorException } from '@nestjs/common'
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async createUser(createUserDto: CreateUserDto): Promise<void> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
     const salt = await bcrypt.genSalt();
     const password = await this.hashPassword(createUserDto.password, salt);
 
@@ -19,6 +19,8 @@ export class UserRepository extends Repository<User> {
 
     try {
       await user.save();
+
+      return user;
     } catch (error) {
       if (error.code === PostgresqlErrorCodes.PG_UNIQUE_VIOLATION) {
         throw new ConflictException('Username already exists');

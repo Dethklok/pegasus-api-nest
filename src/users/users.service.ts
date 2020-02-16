@@ -13,7 +13,7 @@ export class UsersService {
   ) {
   }
 
-  createUser(createUserDto: CreateUserDto): Promise<void> {
+  createUser(createUserDto: CreateUserDto): Promise<User> {
     return this.userRepository.createUser(createUserDto);
   }
 
